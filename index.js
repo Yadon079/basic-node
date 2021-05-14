@@ -11,6 +11,8 @@ const config = require('./config/key')
 // 만들어 둔 model을 가져옴
 const { User } = require("./models/User")
 
+const { auth } = require("./middleware/auth")
+
 // application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({extended: true}))
 
@@ -28,6 +30,7 @@ mongoose.connect(config.mongoURI, {
 
 
 
+
 // register router start
 // 루트에서 hello world를 출력
 app.get('/', (req, res) => {
@@ -35,7 +38,7 @@ app.get('/', (req, res) => {
 })
 
 // client에서 가져온 회원가입 정보를 데이터베이스에 저장
-app.post('/register', (req, res) => {
+app.post('/api/users/register', (req, res) => {
     const user = new User(req.body)
 
     user.save((err, userInfo) => {
@@ -48,7 +51,7 @@ app.post('/register', (req, res) => {
 // register router end
 
 // login router start
-app.post('/login', (req, res) => {
+app.post('/api/users/login', (req, res) => {
     // 요청된 email을 DB에서 검색
     User.findOne({ email: req.body.email }, (err, user) => {
         if(!user) {
@@ -81,6 +84,22 @@ app.post('/login', (req, res) => {
     })
 })
 // login router end
+
+// auth router start
+app.get('/api/users/auth', auth, (req, res) => {
+    // 인증이 된 유저 정보
+    res.status(200).json({
+        _id: req.user._id,
+        isAdimin: req.user.roll === 0 ? false : true, // role 0 : 유저
+        isAuth: true,
+        email: req.user.email,
+        name: req.user.name,
+        lastname: req.user.lastname,
+        role: req.user.role,
+        image: req.user.image
+    })
+})
+// auth router end
 
 
 // 포트에서 앱을 실행

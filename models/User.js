@@ -73,11 +73,12 @@ userSchema.methods.comparePassword = function(plainPassword, callback) {
     // plainPassword와 암호화된 비밀번호 비교
     bcrypt.compare(plainPassword, this.password, function(err, isMatch) {
         if(err) return callback(err)
-        
+
         callback(null, isMatch)
     })
 }
 
+// 토큰 생성
 userSchema.methods.genToken = function(callback) {
     var user = this;
 
@@ -90,6 +91,23 @@ userSchema.methods.genToken = function(callback) {
 
         callback(null, user)
     })
+}
+
+// 복호화
+userSchema.statics.findByToken = funtion(token, callback) {
+    var user = this;
+
+    // verify a token
+    jwt.verify(token, 'secretToken', function(err, decoded) {
+        // 토큰 검증
+        user.findOne({ "_id": decoded, "token": token }, function(err, user) {
+            if(err) return callback(err)
+
+            callback(null, user)
+        })
+    })
+
+
 }
 
 
