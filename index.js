@@ -24,9 +24,7 @@ mongoose.connect(config.mongoURI, {
 
 
 
-
-
-
+// register router start
 // 루트에서 hello world를 출력
 app.get('/', (req, res) => {
   res.send('Hello World!')
@@ -35,6 +33,7 @@ app.get('/', (req, res) => {
 // client에서 가져온 회원가입 정보를 데이터베이스에 저장
 app.post('/register', (req, res) => {
     const user = new User(req.body)
+    
     user.save((err, userInfo) => {
         if(err) return res.json({ success: false, err})
         return res.status(200).json({
@@ -42,7 +41,7 @@ app.post('/register', (req, res) => {
         })
     })
 })
-
+// register router end
 
 // 포트에서 앱을 실행
 app.listen(port, () => {
