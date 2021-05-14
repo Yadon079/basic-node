@@ -4,6 +4,8 @@ const port = 5000 // 백서버 port 번호
 
 const bodyParser = require('body-parser')
 
+const config = require('./config/key')
+
 // 만들어 둔 model을 가져옴
 const { User } = require("./models/User")
 
@@ -15,7 +17,7 @@ app.use(bodyParser.json())
 
 // mongoDB connect
 const mongoose = require('mongoose')
-mongoose.connect('mongodb+srv://gracenam:abcd1234@basic-node.olyns.mongodb.net/myFirstDatabase?retryWrites=true&w=majority', {
+mongoose.connect(config.mongoURI, {
     useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true, useFindAndModify: false
 }).then(() => console.log('MongoDB Connected...'))
   .catch(err => console.log(err))  
