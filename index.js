@@ -101,6 +101,20 @@ app.get('/api/users/auth', auth, (req, res) => {
 })
 // auth router end
 
+// logout router start
+app.get('/api/users/logout', auth, (req, res) => {
+    // 유저를 찾아서 정보를 업데이트
+    User.findOneAndUpdate({ _id: req.user._id }, { token: "" }, (err, user) => {
+        if(err) return res.json({ success: false, err })
+
+        return res.status(200).send({
+            success: true
+        })
+    })
+})
+// logout router end
+
+
 
 // 포트에서 앱을 실행
 app.listen(port, () => {

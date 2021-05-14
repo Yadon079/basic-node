@@ -94,7 +94,7 @@ userSchema.methods.genToken = function(callback) {
 }
 
 // 복호화
-userSchema.statics.findByToken = funtion(token, callback) {
+userSchema.statics.findByToken = function(token, callback) {
     var user = this;
 
     // verify a token
@@ -106,7 +106,6 @@ userSchema.statics.findByToken = funtion(token, callback) {
             callback(null, user)
         })
     })
-
 
 }
 
