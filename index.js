@@ -4,6 +4,8 @@ const port = 5000 // 백서버 port 번호
 
 const bodyParser = require('body-parser')
 
+const cookieParser = require('cookie-parser')
+
 const config = require('./config/key')
 
 // 만들어 둔 model을 가져옴
@@ -14,6 +16,8 @@ app.use(bodyParser.urlencoded({extended: true}))
 
 //application/json
 app.use(bodyParser.json())
+
+app.use(cookieParser())
 
 // mongoDB connect
 const mongoose = require('mongoose')
@@ -33,7 +37,7 @@ app.get('/', (req, res) => {
 // client에서 가져온 회원가입 정보를 데이터베이스에 저장
 app.post('/register', (req, res) => {
     const user = new User(req.body)
-    
+
     user.save((err, userInfo) => {
         if(err) return res.json({ success: false, err})
         return res.status(200).json({
@@ -42,6 +46,42 @@ app.post('/register', (req, res) => {
     })
 })
 // register router end
+
+// login router start
+app.post('/login', (req, res) => {
+    // 요청된 email을 DB에서 검색
+    User.findOne({ email: req.body.email }, (err, user) => {
+        if(!user) {
+            return res.json({
+                loginSuccess: false,
+                message: "이메일에 해당하는 유저가 없습니다."
+            })
+        }
+
+        // 해당 유저가 있다면 비밀번호 검증
+        user.comparePassword(req.body.password, (err, isMatch) => {
+            if(!isMatch) return res.json({
+                loginSuccess: false,
+                message: "비밀번호가 틀렸습니다."
+            })
+
+            // 일치한다면 토큰 생성
+            user.genToken((err, user) => {
+                if(err) return res.status(400).send(err);
+
+                // 토큰 저장
+                res.cookie("x_auth", user.token)
+                .status(200)
+                .json({
+                    loginSuccess: true,
+                    userId: user._id
+                })
+            })
+        })
+    })
+})
+// login router end
+
 
 // 포트에서 앱을 실행
 app.listen(port, () => {
