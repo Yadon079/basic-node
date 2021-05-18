@@ -5,8 +5,8 @@ function LandingPage() {
 
     // get request를 서버에 전송
     useEffect(() => {
-        axios.get('http://localhost:5000/api/hello')
-        .then(response => console.log(response.data)) // 결과를 console에 출력
+        axios.get('/api/hello')
+        .then(response => { console.log(response) }) // 결과를 console에 출력
     }, [])
 
     return (

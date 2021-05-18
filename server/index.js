@@ -1,6 +1,5 @@
 const express = require('express') // express module 가져옴
 const app = express() // function으로 앱을 만듬
-const port = 5000 // 백서버 port 번호
 
 const bodyParser = require('body-parser')
 
@@ -121,6 +120,8 @@ app.get('/api/users/logout', auth, (req, res) => {
 // logout router end
 
 
+
+const port = 5000 // 백서버 port 번호
 
 // 포트에서 앱을 실행
 app.listen(port, () => {
